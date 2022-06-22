@@ -7,9 +7,14 @@ A pathway for learning backend web coding
     - Go
     - Java
 2. Build a web-server that serves an html document that has the text `Hello World!` in it.
-    - Prefer common web-server technologies, like the standard library, over obscure frameworks.
+    - Prefer common web-server libraries, like the standard library, over obscure frameworks.
+    - In Node.js, this would be Express.
+    - In Python, this would be Django or Flask.
+    - In Go, this would be the standard library, with a third party router, like Gorilla or Chi.
+    - In Java, this would be the standard library.
 3. Add a POST endpoint that takes in a JSON message in the body, and replies with the message reversed in a JSON response.
     - The goal here is to parse and format JSON data.
+    - To help test this endpoint, Postman and curl are both valid options.
 4. Add endpoints that allow for saving and editing a more complicated data type. Just save the information in-memory for now, using a dictionary, map, object, etc. Do not forget thread-safety.
     1. Add a create endpoint that allows for creating a new item, and saving it.
         - The item you are saving should have at least three fields.
@@ -37,16 +42,16 @@ A pathway for learning backend web coding
         - In a situation where the same config value is present in multiple locations, command-line should be highest priority, followed by environment variables, and finally the config file.
     - **Extra-credit**: If the credentials for accessing the database are missing, use the in-memory system instead.
         - Do not use the in-memory system if the credentials are present, but incorrect. The user in that case obviously wants the database, and may be surprised by suddenly running in memory.
-8. Add security on your endpoints. Require the user to be authenticated to access anything but the list and retrieve endpoints.
+8. Add some tests to confirm all code so far works as intended. Our system is starting to get complicated enough that standardized testing is useful.
+    - For all future changes, make sure to add tests for them.
+    - Prefer smaller tests when possible, with fewer asserts per test, and descriptive test names.
+    - Prefer unit tests over end-to-end tests. Adjust your code to allow for mocking dependencies like the database if needed.
+9. Add security on your endpoints. Require the user to be authenticated to access anything but the list and retrieve endpoints.
     - For now, just add a new endpoint that authenticates you, and another to de-authenticate. Do not bother with checking passwords or individual user accounts yet.
     - Cookies and bearer tokens are both good choices to do the authentication.
     - Make sure that whatever you use to authenticate is validated using cryptographic algorithms.
         - HMAC and JWT are both good standard technologies for this.
         - Your cryptographic key should be stored in your config.
-9. Add some tests to confirm all code so far works as intended. Our system is starting to get complicated enough that standardized testing is useful.
-    - For all future changes, make sure to add tests for them.
-    - Prefer smaller tests when possible, with fewer asserts per test, and descriptive test names.
-    - Prefer unit tests over end-to-end tests. Adjust your code to allow for mocking dependencies like the database if needed.
 10. Add user accounts.
     - Adjust your authenticate endpoint to just take in the ID or username of a user account. No passwords yet.
     - Having a separate endpoint for creating a new user account and authenticating from the endpoint for just authenticating may be useful.
@@ -75,10 +80,21 @@ A pathway for learning backend web coding
                 - most flexible for users of your API, but when working in large teams where you do not know how the API will be consumed
 14. Allow for anonymous users of your API.
     - Unauthenticated users should be able to create items and edit their own items.
-    - Items created by unauthenticated users should be cleaned up after a period of inactivity.
     - Two separate anonymous users should not be able to edit each others' items.
     - If an anonymous user creates an account, any items they created should be associated with that account.
-15. Add an eventing system, where an event can be raised, like user created, and then additional code can be run in the background based on the events.
+    - **Extra-credit**: Items created by unauthenticated users should be cleaned up after a period of inactivity.
+        - The cleanup job should run once every minute, and delete any items from an annonymous user that has no activity for the last 5 minutes.
+        - **Extra-extra-credit**: Make sure that the cleanup task will not be run twice if you are running two copies of your server at once.
+15. Add a file storage system, so a user can upload files
+    - Start with an in-memory version, similar to the database.
+    - Then use a folder on the local disk.
+        - Prevent users from being able to write to a location outside the folder, even if they upload a file with a filename like `../name.txt`
+    - Then add support for a object storage system.
+        - Minio is fully AWS S3 compatible, but supports working in a local docker container.
+        - You can also use a cloud object storage system directly, like AWS S3, or Google Cloud Storage.
+    - A good file to let the user upload is an Avatar picture for their account.
+    - Make sure to add some security features, like preventing a user from uploading a 10 gb file.
+16. Add an eventing system, where an event can be raised, like user created, and then additional code can be run in the background based on the events.
     - Start with an in-memory version, similar to the database.
     - Popular messaging systems that can be used for this include:
         - Kafka
@@ -88,7 +104,7 @@ A pathway for learning backend web coding
         - Sending an email to a user when they create an account is a common use for this type of system.
     - Create a dead-letter queue in case the code responding to an event fails several times in a row.
     - Add an endpoint to review items in the dead-letter queue. Make sure to only allow administrators to view this. Recommend going back and doing the extra credit in section 11 above if you have not done so yet.
-16. Add a live chat system for your app.
+17. Add a live chat system for your app.
     - gRPC supports streaming responses.
     - GraphQL supports subscriptions.
     - Standard web technologies includes [Server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events)

@@ -15,6 +15,9 @@ A pathway for learning backend web coding
 3. Add a POST endpoint that takes in a JSON message in the body, and replies with the message reversed in a JSON response.
     - The goal here is to parse and format JSON data.
     - To help test this endpoint, Postman and curl are both valid options.
+    - Make sure to set the `Content-Type` header on the response.
+    - **Extra-credit**: Accept input in JSON, XML, and form data formats, using the `Content-Type` header on the request to determine which to use.
+    - **Extra-credit**: Support returning data in either JSON or XML format based on the `Accept` header on the request. Don't forget to set the `Content-Type` on the response based on the format you are returning.
 4. Add endpoints that allow for saving and editing a more complicated data type. Just save the information in-memory for now, using a dictionary, map, object, etc. Do not forget thread-safety.
     1. Add a create endpoint that allows for creating a new item, and saving it.
         - The item you are saving should have at least three fields.
